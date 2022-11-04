@@ -3,8 +3,8 @@ import { useFonts, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@
 import { THEME } from './src/styles/theme';
 
 import { Loading } from './src/components/Loading';
+import { Routes } from "./src/routes";
 import { AuthContextProvider } from "./src/contexts/AuthContext";
-import { SignIn } from "./src/screens/Signin";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ useFonts, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold });
@@ -17,7 +17,7 @@ export default function App() {
           backgroundColor="transparent"
           translucent
         />
-        {fontsLoaded ? <Loading /> : <SignIn />}
+        {fontsLoaded ? <Loading /> : <Routes />}
       </AuthContextProvider>
     </NativeBaseProvider>
   );
