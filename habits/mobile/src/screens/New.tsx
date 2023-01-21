@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { ScrollView, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { ScrollView, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { BackButton } from "../components/BackButton";
 import { Checkbox } from "../components/Checkbox";
 import colors from "tailwindcss/colors";
+import { api } from "../lib/axios";
 
 const availableWeekDays = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado'];
 
 export function New() {
+    const [title, setTitle] = useState('');
     const [weekDays, setWeekDays] = useState<number[]>([]);
 
     function handleToggleWeekDay(weekDayIndex: number) {
@@ -15,6 +17,26 @@ export function New() {
             setWeekDays(prevState => prevState.filter(weekDay => weekDay !== weekDayIndex));
         } else {
             setWeekDays(prevState => [...prevState, weekDayIndex]);
+        }
+    }
+
+    async function handleCreateNewHabit() {
+        try {
+            if (!title.trim() || weekDays.length === 0) {
+                Alert.alert("Nobo Habito", "Informe o nome do Habito e escolha a peridiocidade")
+                return;
+            }
+
+            await api.post('/habits', { title, weekDays });
+
+            setTitle('');
+            setWeekDays([]);
+
+            Alert.alert('Novo Habito', 'Novo Habito criado com sucesso!')
+
+        } catch (error) {
+            console.log(error);
+            Alert.alert('Ops', 'Nao foi possivel criar o novo habito')
         }
     }
 
@@ -38,6 +60,8 @@ export function New() {
                     className="h-12 pl-4 rounded-lg bg-zinc-900 text-white border-2 border-zinc-800 focus:border-green-600"
                     placeholder="Exercicios, dormir bem, etc..."
                     placeholderTextColor={colors.zinc[400]}
+                    onChangeText={setTitle}
+                    value={title}
                 />
                 <Text className="font-semibold mt-4 mb-3 text-white text-base">
                     Qual a recorrência
@@ -56,6 +80,7 @@ export function New() {
                 <TouchableOpacity
                     className="w-full h-14 flex-row items-center justify-center bg-green-600 rounded-md mt-6"
                     activeOpacity={0.7}
+                    onPress={handleCreateNewHabit}
                 >
                     <Feather
                         name="check"
